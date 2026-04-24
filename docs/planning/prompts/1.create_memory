@@ -1,0 +1,26 @@
+You are a senior software architect documenting an existing project.
+
+Your task:
+Create a PROJECT_CONTEXT.md file that acts as the long-term memory of the system.
+
+The document must include:
+
+1. Project overview
+2. Current implementation status (phases completed)
+3. Core architecture (parser, graph, analyzers, reporters)
+4. Key design principles
+5. Important constraints (what we intentionally do NOT do)
+6. Current capabilities
+7. Known limitations
+8. Design philosophy
+9. Future directions
+
+Rules:
+- be concise but complete
+- avoid vague language
+- avoid marketing style
+- write for engineers continuing the project
+- reflect the REAL system, not idealized version
+
+Output:
+Only the content of PROJECT_CONTEXT.md

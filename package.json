@@ -1,0 +1,22 @@
+{
+  "name": "company-code-intel-java-phase2",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "ts-node src/cli/main.ts",
+    "index": "ts-node src/cli/main.ts index",
+    "impact": "ts-node src/cli/main.ts impact",
+    "analyze": "ts-node src/cli/main.ts analyze",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

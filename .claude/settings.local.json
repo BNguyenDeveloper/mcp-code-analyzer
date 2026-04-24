@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm list *)",
+      "mcp__mcp-code-analyzer__get_project_context",
+      "mcp__mcp-code-analyzer__analyze_repo"
+    ]
+  }
+}
