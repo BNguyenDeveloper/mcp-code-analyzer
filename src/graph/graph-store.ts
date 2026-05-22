@@ -269,22 +269,22 @@ export class GraphStore {
     );
   }
 
-  // Phase 5: Get string concatenations in a function
+  // Get string concatenations in a function
   getStringConcatsInFunction(fnId: string): StringConcatInfo[] {
     return this.stringConcats.filter(sc => sc.methodId === fnId);
   }
 
-  // Phase 5: Check if function uses PreparedStatement
+  // Check if function uses PreparedStatement
   usesPreparedStatement(fnId: string): boolean {
     return this.preparedStatements.some(ps => ps.methodId === fnId && ps.usesPreparedStatement);
   }
 
-  // Phase 5: Check if function uses parameterized queries
+  // Check if function uses parameterized queries
   usesParameterization(fnId: string): boolean {
     return this.preparedStatements.some(ps => ps.methodId === fnId && ps.usesParameterization);
   }
 
-  // Phase 5: Check if a finding should be suppressed
+  // Check if a finding should be suppressed
   isSuppressed(file: string, line: number, ruleId: string): boolean {
     // Improved suppression matching to reduce accidental suppressions:
     // 1. Exact same-line match (comment on same line)
@@ -309,7 +309,7 @@ export class GraphStore {
     });
   }
 
-  // Phase 5: Get call chain depth (simple 2-3 hop traversal)
+  // Get call chain depth (simple 2-3 hop traversal)
   getCallChain(startFnId: string, depth: number = 2): FunctionSymbol[][] {
     const chains: FunctionSymbol[][] = [];
     const visited = new Set<string>();

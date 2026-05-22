@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import { loadRepoConfigs } from "../registry/repo-registry";
+import { inferRepoConfig } from "../registry/repo-registry";
 import { GraphStore } from "../graph/graph-store";
 import { JavaParserAdapter } from "../parsers/java/java-parser";
 import { LanguageParser } from "../parsers/parser-interface";
@@ -16,17 +16,19 @@ function getParser(language: string): LanguageParser {
   return parser;
 }
 
-export async function indexAllRepos() {
-  const repos = await loadRepoConfigs();
+export interface IndexOptions {
+  repoRoot?: string;
+  repoName?: string;
+}
+
+export async function indexAllRepos(options: IndexOptions = {}) {
+  const repo = await inferRepoConfig(options.repoRoot, options.repoName);
   const store = new GraphStore();
+  const parser = getParser(repo.language);
 
-  for (const repo of repos) {
-    const parser = getParser(repo.language);
-
-    console.log(`Indexing ${repo.name}...`);
-    const analysis = await parser.parse(repo);
-    store.addRepoAnalysis(analysis);
-  }
+  console.log(`Indexing ${repo.name}...`);
+  const analysis = await parser.parse(repo);
+  store.addRepoAnalysis(analysis);
 
   store.resolveCallsByName();
 

@@ -13,7 +13,7 @@ export class BugAnalyzer implements Analyzer {
     findings.push(...this.detectResourceLeaks(store));
     findings.push(...this.detectEmptyCatchBlocks(store));
 
-    // Phase 5: Filter out suppressed findings
+    // Filter out findings intentionally suppressed in source.
     return findings.filter(f => !store.isSuppressed(f.file, f.line, f.ruleId));
   }
 

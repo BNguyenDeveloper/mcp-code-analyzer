@@ -12,7 +12,7 @@ export class SecurityAnalyzer implements Analyzer {
     findings.push(...this.detectSQLInjection(store));
     findings.push(...this.detectCommandInjection(store));
 
-    // Phase 5: Filter out suppressed findings
+    // Filter out findings intentionally suppressed in source.
     return findings.filter(f => !store.isSuppressed(f.file, f.line, f.ruleId));
   }
 
@@ -69,7 +69,7 @@ export class SecurityAnalyzer implements Analyzer {
         classInfo.stereotype === "RestController";
 
       if (isController) {
-        // Phase 5: Check for string concatenation (AST-based from parser)
+        // Check for string concatenation extracted from the AST parser.
         const concats = store.getStringConcatsInFunction(call.callerId);
         const hasSqlConcat = concats.some(c => c.inSqlContext);
 
@@ -253,7 +253,7 @@ export class SecurityAnalyzer implements Analyzer {
             classInfo.stereotype === "RestController";
 
           if (isController) {
-            // Phase 5: Check for string concatenation (AST-based from parser)
+            // Check for string concatenation extracted from the AST parser.
             const concats = store.getStringConcatsInFunction(call.callerId);
             const hasCommandConcat = concats.some(c => c.inCommandContext);
 

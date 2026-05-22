@@ -2,12 +2,6 @@ import fs from "fs-extra";
 import path from "path";
 import { AnalysisResult } from "../core/types";
 
-export async function saveJsonReport(result: AnalysisResult, outputPath: string): Promise<void> {
-  await fs.ensureDir(path.dirname(outputPath));
-  await fs.writeJson(outputPath, result, { spaces: 2 });
-  console.log(`JSON report saved to: ${outputPath}`);
-}
-
 export async function saveJsonReports(result: AnalysisResult, outputDir = "data/findings"): Promise<void> {
   await fs.ensureDir(outputDir);
 

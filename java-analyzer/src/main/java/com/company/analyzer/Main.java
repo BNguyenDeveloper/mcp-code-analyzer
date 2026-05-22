@@ -285,7 +285,7 @@ public class Main {
                 output.tryCatchBlocks.add(tci);
             });
 
-            // Phase 5: Extract string concatenations
+            // Extract string concatenations
             method.findAll(BinaryExpr.class).forEach(binaryExpr -> {
                 if (binaryExpr.getOperator() == BinaryExpr.Operator.PLUS) {
                     // Check if either side is a string literal
@@ -337,7 +337,10 @@ public class Main {
                 }
             });
 
-            // Phase 5: Extract PreparedStatement usage
+            // Extract PreparedStatement usage
+            boolean hasParameterSetter = method.findAll(MethodCallExpr.class).stream()
+                    .anyMatch(Main::isPreparedStatementSetter);
+
             method.findAll(ObjectCreationExpr.class).forEach(objCreation -> {
                 String typeName = objCreation.getType().getNameAsString();
                 if (typeName.equals("PreparedStatement") || typeName.contains("PreparedStatement")) {
@@ -347,7 +350,7 @@ public class Main {
                     psi.line = objCreation.getBegin().map(p -> p.line).orElse(-1);
                     psi.id = psi.file + "#" + psi.methodId + "@prepared:" + psi.line;
                     psi.usesPreparedStatement = true;
-                    psi.usesParameterization = false; // Will be set by detecting setString, setInt calls
+                    psi.usesParameterization = hasParameterSetter;
 
                     output.preparedStatements.add(psi);
                 }
@@ -368,24 +371,13 @@ public class Main {
                         String query = call.getArgument(0).toString();
                         psi.usesParameterization = query.contains("?");
                     }
+                    psi.usesParameterization = psi.usesParameterization || hasParameterSetter;
 
                     output.preparedStatements.add(psi);
                 }
-
-                // Detect setString, setInt, etc. calls (indicates parameterization)
-                if (call.getNameAsString().startsWith("set") &&
-                    (call.getNameAsString().equals("setString") ||
-                     call.getNameAsString().equals("setInt") ||
-                     call.getNameAsString().equals("setLong") ||
-                     call.getNameAsString().equals("setBoolean") ||
-                     call.getNameAsString().equals("setDate"))) {
-
-                    // Mark method as using parameterization
-                    // This will be picked up by the analyzer
-                }
             });
 
-            // Phase 5: Extract suppression comments
+            // Extract suppression comments
             // Check method comments
             if (method.getComment().isPresent()) {
                 Comment methodComment = method.getComment().get();
@@ -441,6 +433,14 @@ public class Main {
     private static boolean hasAnnotation(NodeWithAnnotations<?> node, String simpleName) {
         return node.getAnnotations().stream()
                 .anyMatch(a -> a.getNameAsString().equals(simpleName));
+    }
+
+    private static boolean isPreparedStatementSetter(MethodCallExpr call) {
+        return call.getNameAsString().equals("setString") ||
+                call.getNameAsString().equals("setInt") ||
+                call.getNameAsString().equals("setLong") ||
+                call.getNameAsString().equals("setBoolean") ||
+                call.getNameAsString().equals("setDate");
     }
 
     private static void parseSuppression(String text, int line, String file, Output output) {

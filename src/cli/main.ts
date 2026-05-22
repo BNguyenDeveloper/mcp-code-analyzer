@@ -8,9 +8,14 @@ program.name("company-code-intel-java-phase2");
 
 program
   .command("index")
-  .description("Index all configured repositories")
-  .action(async () => {
-    await indexAllRepos();
+  .description("Index the current Java repository or a provided repository root")
+  .option("--repo-root <path>", "Java repository root (defaults to current working directory)")
+  .option("--repo-name <name>", "Repository/service name (defaults to directory name)")
+  .action(async (opts) => {
+    await indexAllRepos({
+      repoRoot: opts.repoRoot,
+      repoName: opts.repoName
+    });
   });
 
 program
@@ -32,7 +37,7 @@ program
     const { runAnalyze } = await import("../app/run-analyze");
     await runAnalyze({
       bugs: !opts.securityOnly,
-      security: !opts.bugsOnly && opts.securityOnly,
+      security: !opts.bugsOnly,
       format: opts.json ? "json" : "both",
       outputDir: opts.output
     });
